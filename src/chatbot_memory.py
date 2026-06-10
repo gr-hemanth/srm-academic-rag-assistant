@@ -1,11 +1,15 @@
+from pathlib import Path
+import os
+
+from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
-
-from pathlib import Path
-from dotenv import load_dotenv
-
+print("HELLO FROM CHATBOT_MEMORY")
+# Load .env from project root
 load_dotenv(Path(__file__).parent.parent / ".env")
+
+print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
 # =========================
 # Load Embedding Model
 # =========================
@@ -32,7 +36,13 @@ llm = ChatGroq(
     model="llama-3.3-70b-versatile"
 )
 
-print("\nSRM Academic Assistant")
+# =========================
+# Conversation Memory
+# =========================
+
+chat_history = []
+
+print("\nSRM Academic Assistant (Memory Version)")
 print("Type 'exit' to quit.\n")
 
 # =========================
@@ -61,26 +71,39 @@ while True:
     )
 
     # -------------------------
+    # Format Chat History
+    # -------------------------
+
+    history_text = ""
+
+    for message in chat_history:
+        history_text += (
+            f"{message['role']}: "
+            f"{message['content']}\n"
+        )
+
+    # -------------------------
     # Prompt
     # -------------------------
 
     prompt = f"""
 You are an SRM Academic Assistant.
 
-Rules:
-1. Answer ONLY using the provided context.
-2. Use exact values and numbers from the context.
-3. Do not combine information from different programs unless the question asks for comparison.
-4. If the answer is not present in the context, say:
-   "I could not find this information in the provided documents."
-5. Be concise and factual.
-6. Mention regulation numbers if available.
+Previous Conversation:
+{history_text}
 
 Context:
 {context}
 
-Question:
+Current Question:
 {query}
+
+Rules:
+1. Answer ONLY from the provided context.
+2. Use previous conversation to understand follow-up questions.
+3. If the answer is not found in the context, say:
+   "I could not find this information in the provided documents."
+4. Be concise and factual.
 
 Answer:
 """
@@ -90,6 +113,28 @@ Answer:
     # -------------------------
 
     response = llm.invoke(prompt)
+
+    # -------------------------
+    # Save Memory
+    # -------------------------
+
+    chat_history.append(
+        {
+            "role": "user",
+            "content": query
+        }
+    )
+
+    chat_history.append(
+        {
+            "role": "assistant",
+            "content": response.content
+        }
+    )
+
+    # -------------------------
+    # Print Answer
+    # -------------------------
 
     print("\nAssistant:")
     print(response.content)
