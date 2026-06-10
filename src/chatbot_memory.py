@@ -5,11 +5,10 @@ from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
-print("HELLO FROM CHATBOT_MEMORY")
+
 # Load .env from project root
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-print("GROQ_API_KEY =", os.getenv("GROQ_API_KEY"))
 # =========================
 # Load Embedding Model
 # =========================
