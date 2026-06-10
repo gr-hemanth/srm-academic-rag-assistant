@@ -1,7 +1,10 @@
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
+from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv(Path(__file__).parent.parent / ".env")
 # =========================
 # Load Embedding Model
 # =========================
@@ -94,10 +97,19 @@ Answer:
     # Sources
     # -------------------------
 
-    pages = sorted(
-        set(doc.metadata["page"] + 1 for doc in results)
+    sources = sorted(
+        set(
+            (
+                doc.metadata.get("source_pdf", "Unknown"),
+                doc.metadata["page"] + 1
+            )
+            for doc in results
+        )
     )
 
     print("\nSources:")
-    print(", ".join(f"Page {page}" for page in pages))
+
+    for source_pdf, page in sources:
+        print(f"{source_pdf} - Page {page}")
+
     print()
