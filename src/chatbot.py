@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent / ".env")
+
 # =========================
 # Load Embedding Model
 # =========================
@@ -30,6 +31,12 @@ vector_store = FAISS.load_local(
 llm = ChatGroq(
     model="llama-3.3-70b-versatile"
 )
+
+# =========================
+# Conversation Memory
+# =========================
+
+chat_history = []
 
 print("\nSRM Academic Assistant")
 print("Type 'exit' to quit.\n")
@@ -60,11 +67,26 @@ while True:
     )
 
     # -------------------------
+    # Format Chat History
+    # -------------------------
+
+    history_text = ""
+
+    for message in chat_history:
+        history_text += (
+            f"{message['role']}: "
+            f"{message['content']}\n"
+        )
+
+    # -------------------------
     # Prompt
     # -------------------------
 
     prompt = f"""
 You are an SRM Academic Assistant.
+
+Previous Conversation:
+{history_text}
 
 Rules:
 1. Answer ONLY using the provided context.
@@ -74,11 +96,12 @@ Rules:
    "I could not find this information in the provided documents."
 5. Be concise and factual.
 6. Mention regulation numbers if available.
+7. Use previous conversation to understand follow-up questions.
 
 Context:
 {context}
 
-Question:
+Current Question:
 {query}
 
 Answer:
@@ -89,6 +112,28 @@ Answer:
     # -------------------------
 
     response = llm.invoke(prompt)
+
+    # -------------------------
+    # Save Memory
+    # -------------------------
+
+    chat_history.append(
+        {
+            "role": "user",
+            "content": query
+        }
+    )
+
+    chat_history.append(
+        {
+            "role": "assistant",
+            "content": response.content
+        }
+    )
+
+    # -------------------------
+    # Print Answer
+    # -------------------------
 
     print("\nAssistant:")
     print(response.content)
