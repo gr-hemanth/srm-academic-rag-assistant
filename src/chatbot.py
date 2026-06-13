@@ -2,6 +2,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from pathlib import Path
+from rank_bm25 import BM25Okapi
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent / ".env")
@@ -23,7 +24,23 @@ vector_store = FAISS.load_local(
     embedding_model,
     allow_dangerous_deserialization=True
 )
+# =========================
+# Build BM25 Index
+# =========================
 
+all_docs = list(
+    vector_store.docstore._dict.values()
+)
+
+tokenized_docs = [
+    doc.page_content.lower().split()
+    for doc in all_docs
+]
+
+bm25 = BM25Okapi(tokenized_docs)
+
+
+print(f"BM25 loaded with {len(all_docs)} chunks")
 # =========================
 # Load LLM
 # =========================
@@ -57,14 +74,39 @@ while True:
     # Retrieval
     # -------------------------
 
-    results = vector_store.similarity_search(
+    # FAISS Results
+    faiss_results = vector_store.similarity_search(
         query,
-        k=10
+        k=5
     )
 
-    context = "\n\n".join(
-        doc.page_content for doc in results
-    )
+    # BM25 Results
+    query_tokens = query.lower().split()
+
+    scores = bm25.get_scores(query_tokens)
+
+    top_indices = scores.argsort()[-5:][::-1]
+
+    bm25_results = [    
+    all_docs[idx]
+    for idx in top_indices
+]
+
+    # Merge Results (remove duplicates)
+
+    seen = set()
+    results = []
+
+    for doc in faiss_results + bm25_results:    
+
+        if doc.page_content not in seen:
+            seen.add(doc.page_content)
+        results.append(doc)
+
+    context = "\n\n".join(  
+    doc.page_content
+    for doc in results
+)
 
     # -------------------------
     # Format Chat History
