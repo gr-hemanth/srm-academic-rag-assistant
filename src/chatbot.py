@@ -3,6 +3,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from pathlib import Path
 from rank_bm25 import BM25Okapi
+from sentence_transformers import CrossEncoder
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent / ".env")
@@ -48,7 +49,15 @@ print(f"BM25 loaded with {len(all_docs)} chunks")
 llm = ChatGroq(
     model="llama-3.3-70b-versatile"
 )
+# =========================
+# Load Reranker
+# =========================
 
+reranker = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L-6-v2"
+)
+
+print("Reranker loaded")
 # =========================
 # Conversation Memory
 # =========================
@@ -101,7 +110,28 @@ while True:
 
         if doc.page_content not in seen:
             seen.add(doc.page_content)
-        results.append(doc)
+            results.append(doc)
+    # -------------------------
+    # Reranking
+    # -------------------------
+
+    pairs = [
+        (query, doc.page_content)
+        for doc in results
+    ]
+
+    scores = reranker.predict(pairs)
+
+    ranked_docs = sorted(
+        zip(scores, results),
+        key=lambda x: x[0],
+        reverse=True
+    )
+
+    results = [
+        doc
+        for score, doc in ranked_docs[:8]
+    ]
 
     context = "\n\n".join(  
     doc.page_content
