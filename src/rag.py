@@ -46,17 +46,28 @@ llm = ChatGroq(
 chat_history = []
 
 def get_answer(query):
+    # -------------------------
+    # Conversational Retrieval
+    # -------------------------
 
+    search_query = query
+
+    if len(chat_history) >= 2:
+        search_query = (
+            chat_history[-2]["content"]
+            + " "
+            + query
+        )
     # -------------------------
     # Hybrid Retrieval
     # -------------------------
 
     faiss_results = vector_store.similarity_search(
-        query,
+        search_query,
         k=5
     )
 
-    query_tokens = query.lower().split()
+    query_tokens = search_query.lower().split()
 
     scores = bm25.get_scores(query_tokens)
 
@@ -81,7 +92,7 @@ def get_answer(query):
     # -------------------------
 
     pairs = [
-        (query, doc.page_content)
+        (search_query, doc.page_content)
         for doc in results
     ]
 

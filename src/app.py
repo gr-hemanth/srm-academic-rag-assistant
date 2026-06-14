@@ -9,23 +9,66 @@ st.set_page_config(
 
 st.title("🎓 SRM Academic Assistant")
 
-question = st.text_input(
-    "Ask a question about SRM regulations or hostel rules:"
+# =========================
+# Chat History
+# =========================
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display Previous Messages
+
+for message in st.session_state.messages:
+
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Chat Input
+
+question = st.chat_input(
+    "Ask a question about SRM regulations or hostel rules..."
 )
 
-if st.button("Ask"):
+if question:
 
-    if question.strip():
+    # Show User Message
 
-        with st.spinner("Searching documents..."):
-            answer, sources = get_answer(question)
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": question
+        }
+    )
 
-        st.subheader("Answer")
-        st.write(answer)
+    with st.chat_message("user"):
+        st.markdown(question)
 
-        st.subheader("Sources")
+    # Generate Answer
 
-        for source_pdf, page in sources:
-            st.markdown(
-                f"- **{source_pdf}** — Page {page}"
-            )
+    with st.spinner("Searching documents..."):
+        answer, sources = get_answer(question)
+
+    source_text = "\n".join(
+        f"- **{source_pdf}** — Page {page}"
+        for source_pdf, page in sources
+    )
+
+    assistant_message = (
+        f"{answer}\n\n"
+        f"### Sources\n"
+        f"{source_text}"
+    )
+
+    # Save Assistant Message
+
+    st.session_state.messages.append(
+        {
+            "role": "assistant",
+            "content": assistant_message
+        }
+    )
+
+    # Display Assistant Message
+
+    with st.chat_message("assistant"):
+        st.markdown(assistant_message)
