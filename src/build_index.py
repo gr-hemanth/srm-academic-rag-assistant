@@ -1,53 +1,65 @@
 import os
+
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-all_documents = []
 
-for file_name in os.listdir("data"):
+def build_index():
 
-    if file_name.endswith(".pdf"):
+    all_documents = []
 
-        pdf_path = os.path.join(
-            "data",
-            file_name
-        )
+    for file_name in os.listdir("data"):
 
-        loader = PyPDFLoader(pdf_path)
+        if file_name.endswith(".pdf"):
 
-        documents = loader.load()
+            pdf_path = os.path.join(
+                "data",
+                file_name
+            )
 
-        for doc in documents:
-            doc.metadata["source_pdf"] = file_name
+            loader = PyPDFLoader(pdf_path)
 
-        all_documents.extend(documents)
+            documents = loader.load()
 
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500,
-    chunk_overlap=100
-)
+            for doc in documents:
+                doc.metadata["source_pdf"] = file_name
 
-chunks = splitter.split_documents(
-    all_documents
-)
+            all_documents.extend(documents)
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
-print(
-    f"Loaded {len(all_documents)} pages"
-)
 
-print(
-    f"Created {len(chunks)} chunks"
-)
-vector_store = FAISS.from_documents(
-    chunks,
-    embedding_model
-)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=100
+    )
 
-vector_store.save_local("faiss_index")
+    chunks = splitter.split_documents(
+        all_documents
+    )
 
-print("FAISS index saved successfully!")
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+    print(
+        f"Loaded {len(all_documents)} pages"
+    )
+
+    print(
+        f"Created {len(chunks)} chunks"
+    )
+
+    vector_store = FAISS.from_documents(
+        chunks,
+        embedding_model
+    )
+
+    vector_store.save_local("faiss_index")
+
+    print("FAISS index saved successfully!")
+
+
+if __name__ == "__main__":
+
+    build_index()

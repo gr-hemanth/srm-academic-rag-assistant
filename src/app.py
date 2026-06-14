@@ -1,17 +1,67 @@
+import os
 import streamlit as st
 
 from rag import get_answer
+from build_index import build_index
 
 st.set_page_config(
     page_title="SRM Academic Assistant",
     page_icon="🎓"
 )
 
-st.title("🎓 SRM Academic Assistant")
+# =========================
+# Sidebar
+# =========================
+
+st.sidebar.title("SRM Academic Assistant")
+st.sidebar.subheader("Upload PDF")
+
+uploaded_file = st.sidebar.file_uploader(
+    "Choose a PDF",
+    type=["pdf"]
+)
+
+if uploaded_file:
+
+    save_path = os.path.join(
+        "data",
+        uploaded_file.name
+    )
+
+    with open(save_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    st.sidebar.success(
+        f"Uploaded: {uploaded_file.name}"
+    )
+
+    if st.sidebar.button("Build Index"):
+
+        with st.spinner("Building index..."):
+            build_index()
+
+        st.sidebar.success(
+            "Index rebuilt successfully!"
+        )
+st.sidebar.subheader("Loaded Documents")
+
+for file_name in sorted(os.listdir("data")):
+
+    if file_name.endswith(".pdf"):
+
+        st.sidebar.write(file_name)
+
+if st.sidebar.button("Clear Chat"):
+
+    st.session_state.messages = []
+
+    st.rerun()
 
 # =========================
-# Chat History
+# Main Page
 # =========================
+
+st.title("🎓 SRM Academic Assistant")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -31,8 +81,6 @@ question = st.chat_input(
 
 if question:
 
-    # Show User Message
-
     st.session_state.messages.append(
         {
             "role": "user",
@@ -42,8 +90,6 @@ if question:
 
     with st.chat_message("user"):
         st.markdown(question)
-
-    # Generate Answer
 
     with st.spinner("Searching documents..."):
         answer, sources = get_answer(question)
@@ -59,16 +105,12 @@ if question:
         f"{source_text}"
     )
 
-    # Save Assistant Message
-
     st.session_state.messages.append(
         {
             "role": "assistant",
             "content": assistant_message
         }
     )
-
-    # Display Assistant Message
 
     with st.chat_message("assistant"):
         st.markdown(assistant_message)
