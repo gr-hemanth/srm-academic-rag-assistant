@@ -1,8 +1,11 @@
 import os
 import streamlit as st
 
-from rag import get_answer
 from build_index import build_index
+from rag import (
+    get_answer,
+    load_knowledge_base
+)
 
 st.set_page_config(
     page_title="SRM Academic Assistant",
@@ -36,13 +39,12 @@ if uploaded_file:
     )
 
     if st.sidebar.button("Build Index"):
-
         with st.spinner("Building index..."):
             build_index()
-
+            load_knowledge_base()
         st.sidebar.success(
-            "Index rebuilt successfully!"
-        )
+            "Index rebuilt and reloaded!"
+    )
 st.sidebar.subheader("Loaded Documents")
 
 for file_name in sorted(os.listdir("data")):

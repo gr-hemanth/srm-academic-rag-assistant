@@ -18,27 +18,49 @@ embedding_model = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-vector_store = FAISS.load_local(
-    "faiss_index",
-    embedding_model,
-    allow_dangerous_deserialization=True
-)
+# =========================
+# Knowledge Base
+# =========================
 
-all_docs = list(
-    vector_store.docstore._dict.values()
-)
+vector_store = None
+all_docs = None
+bm25 = None
 
-tokenized_docs = [
-    doc.page_content.lower().split()
-    for doc in all_docs
-]
 
-bm25 = BM25Okapi(tokenized_docs)
+def load_knowledge_base():
+
+    global vector_store
+    global all_docs
+    global bm25
+
+    vector_store = FAISS.load_local(
+        "faiss_index",
+        embedding_model,
+        allow_dangerous_deserialization=True
+    )
+
+    all_docs = list(
+        vector_store.docstore._dict.values()
+    )
+
+    tokenized_docs = [
+        doc.page_content.lower().split()
+        for doc in all_docs
+    ]
+
+    bm25 = BM25Okapi(tokenized_docs)
+
+    print(
+        f"Knowledge Base Loaded: "
+        f"{len(all_docs)} chunks"
+    )
+
+
+load_knowledge_base()
 
 reranker = CrossEncoder(
     "cross-encoder/ms-marco-MiniLM-L-6-v2"
 )
-
 llm = ChatGroq(
     model="llama-3.3-70b-versatile"
 )
