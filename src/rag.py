@@ -67,14 +67,17 @@ llm = ChatGroq(
 
 chat_history = []
 
-def get_answer(query):
+def get_answer(
+    query,
+    use_memory=True
+):
     # -------------------------
     # Conversational Retrieval
     # -------------------------
 
     search_query = query
 
-    if len(chat_history) >= 2:
+    if use_memory and len(chat_history) >= 2:
         search_query = (
             chat_history[-2]["content"]
             + " "
@@ -86,14 +89,14 @@ def get_answer(query):
 
     faiss_results = vector_store.similarity_search(
         search_query,
-        k=5
+        k=20
     )
 
     query_tokens = search_query.lower().split()
 
     scores = bm25.get_scores(query_tokens)
 
-    top_indices = scores.argsort()[-5:][::-1]
+    top_indices = scores.argsort()[-20:][::-1]
 
     bm25_results = [
         all_docs[idx]
@@ -126,10 +129,10 @@ def get_answer(query):
         reverse=True
     )
 
-    # Keep top 8 reranked chunks
+    # Keep top 5 reranked chunks
     results = [
         doc
-        for score, doc in ranked_docs[:8]
+        for score, doc in ranked_docs[:5]
     ]
 
     context = "\n\n".join(
@@ -143,11 +146,12 @@ def get_answer(query):
 
     history_text = ""
 
-    for message in chat_history:
-        history_text += (
-            f"{message['role']}: "
-            f"{message['content']}\n"
-        )
+    if use_memory:
+        for message in chat_history:
+            history_text += (
+                f"{message['role']}: "
+                f"{message['content']}\n"
+            )
 
     prompt = f"""
 You are an SRM Academic Assistant.
@@ -176,19 +180,21 @@ Answer:
 
     response = llm.invoke(prompt)
 
-    chat_history.append(
-        {
-            "role": "user",
-            "content": query
-        }
-    )
+    if use_memory:
 
-    chat_history.append(
-        {
-            "role": "assistant",
-            "content": response.content
-        }
-    )
+        chat_history.append(
+            {
+                "role": "user",
+                "content": query
+            }
+        )
+
+        chat_history.append(
+            {
+                "role": "assistant",
+                "content": response.content
+            }
+        )
 
     sources = sorted(
         set(
@@ -200,4 +206,4 @@ Answer:
         )
     )
 
-    return response.content, sources
+    return response.content, sources, context

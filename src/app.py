@@ -94,7 +94,7 @@ if question:
         st.markdown(question)
 
     with st.spinner("Searching documents..."):
-        answer, sources = get_answer(question)
+        answer, sources, _ = get_answer(question)
 
     source_text = "\n".join(
         f"- **{source_pdf}** — Page {page}"
