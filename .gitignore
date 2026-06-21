@@ -14,3 +14,6 @@ __pycache__/
 
 # FAISS Index
 faiss_index/
+
+__pycache__/
+*.pyc

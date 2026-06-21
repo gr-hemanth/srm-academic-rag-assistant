@@ -1,0 +1,102 @@
+[
+  {
+    "question": "What is the minimum attendance requirement?",
+    "expected_answer": "A student must maintain at least 75% attendance in individual courses."
+  },
+  {
+    "question": "What happens if attendance falls below 75%?",
+    "expected_answer": "The student becomes ineligible for the end semester examination and is awarded an I grade."
+  },
+  {
+    "question": "What is code L?",
+    "expected_answer": "Attendance below 75%."
+  },
+  {
+    "question": "What is code I?",
+    "expected_answer": "Incomplete grade due to insufficient attendance."
+  },
+  {
+    "question": "What does I grade stand for?",
+    "expected_answer": "Incomplete or registration cancelled for want of minimum attendance."
+  },
+  {
+    "question": "Who may grant condonation of attendance?",
+    "expected_answer": "Dean CET may grant condonation based on committee recommendation."
+  },
+  {
+    "question": "What is the vision of SRMIST?",
+    "expected_answer": "To emerge as a World-Class University in creating and disseminating knowledge."
+  },
+  {
+    "question": "What is the mission of SRMIST?",
+    "expected_answer": "To move up through international alliances and create innovative educational opportunities."
+  },
+  {
+    "question": "What are the Central Library weekday timings?",
+    "expected_answer": "08.00 am to 12.00 Midnight."
+  },
+  {
+    "question": "What are the Central Library weekend timings?",
+    "expected_answer": "09.00 am to 07.00 pm."
+  },
+  {
+    "question": "What are the Library Office timings?",
+    "expected_answer": "09.00 am to 05.00 pm."
+  },
+  {
+    "question": "What is the lunch break timing in the Library Office?",
+    "expected_answer": "01.15 pm to 01.45 pm."
+  },
+  {
+    "question": "How many books can an undergraduate student borrow from the library?",
+    "expected_answer": "Three books for 15 days."
+  },
+  {
+    "question": "How many books can a postgraduate student borrow?",
+    "expected_answer": "Four books for 15 days."
+  },
+  {
+    "question": "What is the objective of SRM hostels?",
+    "expected_answer": "To provide a nurturing and disciplined residential environment for students."
+  },
+  {
+    "question": "What items are prohibited in hostel rooms?",
+    "expected_answer": "Crackers, dangerous weapons, firearms and contraband items."
+  },
+  {
+    "question": "Is ragging allowed in SRM hostels?",
+    "expected_answer": "No, ragging is strictly prohibited."
+  },
+  {
+    "question": "Can a student stay away from the hostel overnight without permission?",
+    "expected_answer": "No, prior permission from the Warden or Deputy Warden is required."
+  },
+  {
+    "question": "Who should students contact regarding hostel complaints?",
+    "expected_answer": "The hostel office or designated hostel authorities."
+  },
+  {
+    "question": "What grade point is assigned to grade O?",
+    "expected_answer": "10 grade points."
+  },
+  {
+    "question": "What mark range corresponds to grade A+?",
+    "expected_answer": "81 to 90."
+  },
+  {
+    "question": "What mark range corresponds to grade O?",
+    "expected_answer": "91 to 100."
+  },
+  {
+    "question": "What does grade Ab indicate?",
+    "expected_answer": "Failure due to non-appearance in examination."
+  },
+  {
+    "question": "Can a successfully completed course be repeated?",
+    "expected_answer": "No, a successfully completed course cannot be repeated."
+  },
+  {
+    "question": "What attendance percentage corresponds to code H?",
+    "expected_answer": "95% and above."
+  }
+]
