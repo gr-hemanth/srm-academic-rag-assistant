@@ -98,5 +98,201 @@
   {
     "question": "What attendance percentage corresponds to code H?",
     "expected_answer": "95% and above."
+  },
+  {
+    "question": "What attendance percentage corresponds to code 9?",
+    "expected_answer": "85% to 94%."
+  },
+  {
+    "question": "What attendance percentage corresponds to code 8?",
+    "expected_answer": "75% to 84%."
+  },
+  {
+    "question": "Is attendance calculated separately for each course?",
+    "expected_answer": "Yes, attendance is calculated separately for each course."
+  },
+  {
+    "question": "What happens to a course registration when minimum attendance is not met?",
+    "expected_answer": "The registration for that course is treated as cancelled."
+  },
+  {
+    "question": "What must a student do after course registration is cancelled because of low attendance?",
+    "expected_answer": "The student must register and repeat the entire course when it is offered next."
+  },
+  {
+    "question": "What is the maximum attendance condonation that can be granted?",
+    "expected_answer": "Condonation cannot exceed 10%."
+  },
+  {
+    "question": "What grade point is assigned to grade I?",
+    "expected_answer": "0 grade points."
+  },
+  {
+    "question": "What grade point is assigned to grade F?",
+    "expected_answer": "0 grade points."
+  },
+  {
+    "question": "What mark range corresponds to grade A?",
+    "expected_answer": "71 to 80."
+  },
+  {
+    "question": "What mark range corresponds to grade B+?",
+    "expected_answer": "61 to 70."
+  },
+  {
+    "question": "What mark range corresponds to grade B?",
+    "expected_answer": "56 to 60."
+  },
+  {
+    "question": "What mark range corresponds to grade C?",
+    "expected_answer": "50 to 55."
+  },
+  {
+    "question": "What mark range corresponds to grade F?",
+    "expected_answer": "Below 50."
+  },
+  {
+    "question": "Which grades indicate that a course has not been successfully completed?",
+    "expected_answer": "F, Ab, and I."
+  },
+  {
+    "question": "Does an I grade remain on the academic record until the course is completed?",
+    "expected_answer": "Yes, it remains on the record until the course is successfully completed."
+  },
+  {
+    "question": "What are the Central Library timings during summer or winter holidays?",
+    "expected_answer": "Monday to Saturday, 09.00 am to 06.00 pm."
+  },
+  {
+    "question": "What are the Architecture Library and School of Law Library weekday timings?",
+    "expected_answer": "Monday to Friday, 08.30 am to 04.30 pm."
+  },
+  {
+    "question": "Are the Architecture Library and School of Law Library open on weekends?",
+    "expected_answer": "No, they are closed on Saturday and Sunday."
+  },
+  {
+    "question": "What are the circulation counter timings on weekdays?",
+    "expected_answer": "Monday to Friday, 08.00 am to 11.00 pm."
+  },
+  {
+    "question": "What are the circulation counter timings on weekends?",
+    "expected_answer": "Saturday and Sunday, 09.00 am to 06.00 pm."
+  },
+  {
+    "question": "Who is eligible for library membership?",
+    "expected_answer": "Faculty, staff, research scholars, and students of SRMIST."
+  },
+  {
+    "question": "How many books can a teaching faculty member borrow?",
+    "expected_answer": "Eight books for a full semester."
+  },
+  {
+    "question": "How many books can supporting staff or programmers borrow?",
+    "expected_answer": "Four books for 15 days."
+  },
+  {
+    "question": "How many books can lab assistants borrow?",
+    "expected_answer": "Two books for 15 days."
+  },
+  {
+    "question": "How many books can research scholars borrow?",
+    "expected_answer": "Four books for 15 days."
+  },
+  {
+    "question": "Name two facilities available in SRM hostels.",
+    "expected_answer": "Examples include Wi-Fi, purified drinking water, water coolers, solar water heating, and uninterrupted power supply."
+  },
+  {
+    "question": "What room-sharing options are available in AC hostels?",
+    "expected_answer": "Two-sharing or three-sharing rooms with attached or common washrooms."
+  },
+  {
+    "question": "What room-sharing options are available in non-AC hostels?",
+    "expected_answer": "Two-sharing, three-sharing, or four-sharing rooms with attached or common washrooms."
+  },
+  {
+    "question": "Can students cook in hostel rooms?",
+    "expected_answer": "No, cooking in hostel rooms is not permitted."
+  },
+  {
+    "question": "What may happen if cooking materials or heaters are repeatedly found in a hostel room?",
+    "expected_answer": "A heavy penalty may be imposed, and repeated offences may result in expulsion from the hostel."
+  },
+  {
+    "question": "Can day scholars enter hostel rooms without approval?",
+    "expected_answer": "No, day scholars are prohibited from entering hostel rooms without prior approval."
+  },
+  {
+    "question": "What fine may be imposed if a day scholar enters a hostel room without approval or dines in the mess?",
+    "expected_answer": "Rs. 2,000."
+  },
+  {
+    "question": "Is wasting food allowed in the hostel mess?",
+    "expected_answer": "No, wasting food is strictly prohibited."
+  },
+  {
+    "question": "What is the fine for the first offence of wasting food in the hostel?",
+    "expected_answer": "Rs. 500."
+  },
+  {
+    "question": "What can happen after repeated food-wasting violations in the hostel?",
+    "expected_answer": "The student may be expelled from the hostel."
+  },
+  {
+    "question": "Are hostellers allowed to enter the kitchen?",
+    "expected_answer": "No, except members of the mess committee."
+  },
+  {
+    "question": "Can students entertain ex-students or students from other institutions in the hostel?",
+    "expected_answer": "No, students are not permitted to entertain ex-students or students from other institutions in the hostel."
+  },
+  {
+    "question": "Can students give tips to hostel service personnel or cooks?",
+    "expected_answer": "No, students must not give tips to service personnel or cooks."
+  },
+  {
+    "question": "Can students stay in the hostel during college working hours without permission?",
+    "expected_answer": "No, they must apply for leave and inform the Warden, Deputy Warden, or SRO."
+  },
+  {
+    "question": "What attendance percentage is required for a student to continue staying in the hostel for subsequent semesters?",
+    "expected_answer": "At least 95% attendance."
+  },
+  {
+    "question": "Are surprise checks of hostel rooms permitted?",
+    "expected_answer": "Yes, wardens and hostel staff may conduct surprise checks to prevent unlawful activities."
+  },
+  {
+    "question": "Can a hosteller shift from one hostel to another without permission?",
+    "expected_answer": "No, shifting between hostels requires valid permission."
+  },
+  {
+    "question": "Are visitors allowed to stay overnight in the hostel?",
+    "expected_answer": "No, overnight stay by visitors is not permitted, except parents in genuine circumstances with advance approval."
+  },
+  {
+    "question": "What must visitors do before entering the hostel?",
+    "expected_answer": "They must sign the visitor's book."
+  },
+  {
+    "question": "What is the fee for replacing a lost library card?",
+    "expected_answer": "I could not find this information in the provided documents."
+  },
+  {
+    "question": "What is the official dress code for SRM students?",
+    "expected_answer": "I could not find this information in the provided documents."
+  },
+  {
+    "question": "What is the exact hostel curfew time for first-year students?",
+    "expected_answer": "I could not find this information in the provided documents."
+  },
+  {
+    "question": "Is mobile phone use allowed inside the library?",
+    "expected_answer": "I could not find this information in the provided documents."
+  },
+  {
+    "question": "What is the official fee for hostel room change?",
+    "expected_answer": "I could not find this information in the provided documents."
   }
 ]
