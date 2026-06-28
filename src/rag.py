@@ -55,6 +55,9 @@ def load_knowledge_base():
         f"{len(all_docs)} chunks"
     )
 
+def get_chunk_count():
+    global all_docs
+    return len(all_docs) if all_docs else 0
 
 load_knowledge_base()
 

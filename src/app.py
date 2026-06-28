@@ -6,7 +6,7 @@ import streamlit as st
 from PIL import Image
 
 from build_index import build_index
-from rag import get_answer, load_knowledge_base
+from rag import get_answer, load_knowledge_base, get_chunk_count
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -128,12 +128,74 @@ st.markdown(
 )
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
-st.sidebar.title("SRM Academic Assistant")
-st.sidebar.subheader("Upload PDF")
+
+# Filename → clean display name mapping
+DISPLAY_NAMES = {
+    "b-tech-mtech-ntegrated-2021-regulations": "Academic Regulations",
+    "b-tech-mtech-integrated-2021-regulations": "Academic Regulations",
+    "hand-book-2025-26": "Student Handbook",
+    "srm-hostel-rules-2025": "Hostel Rules",
+}
+
+def get_display_name(filename: str) -> str:
+    """Convert a PDF filename to a clean display name."""
+    stem = filename.removesuffix(".pdf")
+    return DISPLAY_NAMES.get(stem, stem.replace("-", " ").replace("_", " ").title())
+
+def get_kb_stats() -> dict:
+    """Dynamically compute knowledge base statistics from the data folder."""
+    stats = {"documents": 0, "pages": 0, "chunks": 0}
+
+    if not os.path.exists("data"):
+        return stats
+
+    pdfs = [f for f in os.listdir("data") if f.endswith(".pdf")]
+    stats["documents"] = len(pdfs)
+
+    try:
+        import fitz  # PyMuPDF
+
+        for pdf in pdfs:
+            with fitz.open(os.path.join("data", pdf)) as doc:
+                stats["pages"] += doc.page_count
+    except ImportError:
+        pass
+
+    # Get chunk count from the already-loaded knowledge base
+    stats["chunks"] = get_chunk_count()
+
+    return stats
+
+# ── 1. Header ─────────────────────────────────────────────────────────────────
+st.sidebar.markdown(
+    """
+    <div style="
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: -6px;
+        padding: 6px 0 10px 0;
+    ">
+        <span style="
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+        ">
+            SRM Academic Assistant
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.sidebar.divider()
+
+# ── 2. Upload Knowledge Base ──────────────────────────────────────────────────
+st.sidebar.markdown("**Upload Knowledge Base**")
 
 uploaded_file = st.sidebar.file_uploader(
     "Choose a PDF",
-    type=["pdf"]
+    type=["pdf"],
+    label_visibility="collapsed",
 )
 
 if uploaded_file:
@@ -151,19 +213,76 @@ if uploaded_file:
             load_knowledge_base()
         st.sidebar.success("Index rebuilt and reloaded.")
 
-st.sidebar.subheader("Loaded Documents")
+st.sidebar.divider()
+
+# ── 3. Knowledge Base Stats ───────────────────────────────────────────────────
+st.sidebar.markdown("**Knowledge Base**")
+kb = get_kb_stats()
+st.sidebar.markdown(
+    f"""
+    <div style="font-size:13px; line-height:2; padding: 2px 0 6px 0;">
+        <div style="display:flex; justify-content:space-between;">
+            <span style="color:#a0a0a0;">Documents</span>
+            <span style="font-weight:600;">{kb['documents']}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+            <span style="color:#a0a0a0;">Pages</span>
+            <span style="font-weight:600;">{kb['pages'] if kb['pages'] else '—'}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+            <span style="color:#a0a0a0;">Chunks</span>
+            <span style="font-weight:600;">{kb['chunks'] if kb['chunks'] else '—'}</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ── 4. Status Indicator ───────────────────────────────────────────────────────
+st.sidebar.markdown("**Status**")
+st.sidebar.markdown(
+    '<span style="color:#4caf50; font-size:13px;">● Ready</span>',
+    unsafe_allow_html=True,
+)
+st.sidebar.divider()
+
+# ── 5. Loaded Documents ───────────────────────────────────────────────────────
+st.sidebar.markdown("**Loaded Documents**")
 
 if os.path.exists("data"):
     pdfs = sorted([f for f in os.listdir("data") if f.endswith(".pdf")])
     if pdfs:
         for pdf in pdfs:
-            st.sidebar.write(pdf)
+            name = get_display_name(pdf)
+            st.sidebar.markdown(
+                f'<div style="font-size:13px; padding:2px 0;">• {name}</div>',
+                unsafe_allow_html=True,
+            )
     else:
-        st.sidebar.caption("No PDFs available.")
+        st.sidebar.caption("No documents loaded.")
 
-if st.sidebar.button("Clear Chat", use_container_width=True):
+st.sidebar.divider()
+
+# ── 6. Clear Conversation ─────────────────────────────────────────────────────
+if st.sidebar.button("Clear Conversation", use_container_width=True):
     st.session_state.messages = []
     st.rerun()
+
+st.sidebar.divider()
+
+# ── 7. Powered By ─────────────────────────────────────────────────────────────
+st.sidebar.markdown("**Powered By**")
+st.sidebar.markdown(
+    """
+    <div style="font-size:12px; color:#808080; line-height:2; padding-bottom:8px;">
+        Hybrid Retrieval<br>
+        FAISS<br>
+        Cross-Encoder Reranking<br>
+        Llama 3.3 70B
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ── Session state ─────────────────────────────────────────────────────────────
 if "messages" not in st.session_state:
