@@ -65,7 +65,9 @@ reranker = CrossEncoder(
     "cross-encoder/ms-marco-MiniLM-L-6-v2"
 )
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile"
+    model="qwen/qwen3.6-27b",
+    temperature=0,
+    reasoning_effort="none",
 )
 
 chat_history = []
@@ -157,20 +159,35 @@ def get_answer(
             )
 
     prompt = f"""
-You are an SRM Academic Assistant.
+You are the SRM Academic Assistant.
 
 Previous Conversation:
 {history_text}
 
 Rules:
 1. Answer ONLY using the provided context.
-2. Use exact values and numbers from the context.
-3. Do not combine information from different programs unless the question asks for comparison.
-4. If the answer is not present in the context, say:
+2. Use exact values, numbers, and terminology from the context.
+3. Do not combine information from different programs unless the question explicitly asks for a comparison.
+4. If the answer is not present in the context, reply exactly:
    "I could not find this information in the provided documents."
-5. Be concise and factual.
-6. Mention regulation numbers if available.
-7. Use previous conversation to understand follow-up questions.
+5. Be concise, factual, and professional.
+6. Mention regulation numbers whenever they are available.
+7. Use previous conversation only to understand follow-up questions.
+8. Do not make assumptions or infer information that is not explicitly present in the context.
+
+Formatting:
+- Use Markdown sparingly.
+- Bold only important values such as:
+  - percentages
+  - credit counts
+  - grades
+  - regulation numbers
+- Do NOT bold complete sentences.
+- Do NOT bold long headings.
+- Use short paragraphs.
+- If multiple points are required, use bullet points.
+- Do not use emojis.
+
 
 Context:
 {context}
@@ -182,6 +199,10 @@ Answer:
 """
 
     response = llm.invoke(prompt)
+
+    answer = response.content
+    import re
+    answer = re.sub(r"\*{1,3}(.*?)\*{1,3}", r"\1", answer)
 
     if use_memory:
 
@@ -195,7 +216,7 @@ Answer:
         chat_history.append(
             {
                 "role": "assistant",
-                "content": response.content
+                "content":answer
             }
         )
 
@@ -209,4 +230,4 @@ Answer:
         )
     )
 
-    return response.content, sources, context
+    return answer, sources, context
