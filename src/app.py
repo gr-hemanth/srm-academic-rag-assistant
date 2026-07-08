@@ -131,7 +131,6 @@ st.markdown(
 
 # Filename → clean display name mapping
 DISPLAY_NAMES = {
-    "b-tech-mtech-ntegrated-2021-regulations": "Academic Regulations",
     "b-tech-mtech-integrated-2021-regulations": "Academic Regulations",
     "hand-book-2025-26": "Student Handbook",
     "srm-hostel-rules-2025": "Hostel Rules",
@@ -278,7 +277,7 @@ st.sidebar.markdown(
         Hybrid Retrieval<br>
         FAISS<br>
         Cross-Encoder Reranking<br>
-        Llama 3.3 70B
+        Qwen 3.6 27B
     </div>
     """,
     unsafe_allow_html=True,
