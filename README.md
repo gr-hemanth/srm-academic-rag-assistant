@@ -41,41 +41,69 @@ Every response is accompanied by the corresponding source document and page refe
 ```mermaid
 flowchart LR
 
-A[📄 PDF Documents] --> B[PyMuPDF Loader]
+%% -------------------------------
+%% Knowledge Base Construction
+%% -------------------------------
 
-B --> C[Recursive Text Chunking]
+subgraph KB["Knowledge Base Construction (Offline)"]
 
-C --> D[Sentence Transformer Embeddings]
+A[PDF Documents]
+B[PyMuPDF Loader]
+C[Recursive Text Chunking]
+D[Sentence Transformer Embeddings]
+E[(FAISS Vector Store)]
+F[(BM25 Index)]
 
-D --> E[(FAISS Vector Store)]
+A --> B
+B --> C
+C --> D
+D --> E
+C --> F
 
-C --> BM[(BM25 Index)]
+end
 
-Q[User Query] --> F[Query Embedding]
+%% -------------------------------
+%% Query Processing
+%% -------------------------------
 
-F --> G[FAISS Semantic Search]
+subgraph QP["Query Processing (Online)"]
 
-Q --> H[BM25 Keyword Search]
+Q[User Query]
+QE[Query Embedding]
+FS[FAISS Semantic Search]
+BS[BM25 Keyword Search]
+M[Merge & Remove Duplicate Chunks]
+R[Cross-Encoder Re-ranking]
+K[Top Relevant Chunks]
+H[Conversation History]
+P[Prompt Construction]
+L[Qwen 3.6 27B via Groq]
+O[Grounded Answer<br/>+ Source Citations]
 
-E --> G
+Q --> QE
+QE --> FS
+Q --> BS
 
-BM --> H
+FS --> M
+BS --> M
 
-G --> I[Hybrid Retrieval]
+M --> R
+R --> K
 
-H --> I
+H --> P
+K --> P
 
-I --> J[Cross-Encoder Re-ranking]
+P --> L
+L --> O
 
-J --> K[Top Relevant Chunks]
+end
 
-M[Conversation Memory] --> L
+%% -------------------------------
+%% Connections
+%% -------------------------------
 
-K --> L[Prompt Construction]
-
-L --> N[Llama 3.3 70B via Groq]
-
-N --> O[Grounded Answer + Source Citations]
+E --> FS
+F --> BS
 ```
 ---
 # 📊 Evaluation
@@ -110,7 +138,7 @@ The system was evaluated using a manually curated benchmark consisting of **74 a
 |-----------|--------------|
 | Programming Language | Python |
 | Frontend | Streamlit |
-| LLM | Llama 3.3 70B (Groq) |
+| LLM | Qwen 3.6 27B (Groq) |
 | AI Framework | LangChain |
 | Embedding Model | sentence-transformers/all-MiniLM-L6-v2 |
 | Vector Database | FAISS |
@@ -126,6 +154,8 @@ The system was evaluated using a manually curated benchmark consisting of **74 a
 ```text
 srm-academic-rag-assistant
 │
+├── .venv/                            # Virtual Environment
+|
 ├── data/                             # Knowledge base PDFs
 │   ├── b-tech-mtech-integrated-2021-regulations.pdf
 │   ├── hand-book-2025-26.pdf
@@ -136,8 +166,7 @@ srm-academic-rag-assistant
 ├── faiss_index/                      # Generated FAISS vector database
 │
 ├── src/
-│   ├── assets/
-│   │   └── SRMIST_logo.png
+│   ├── assets/                       # Rewuried png files
 │   ├── app.py                        # Streamlit application
 │   ├── chatbot.py                    # Chat interface
 │   ├── rag.py                        # Main RAG pipeline
@@ -225,13 +254,25 @@ GROQ_API_KEY=your_groq_api_key
 
 ---
 
-### 5. Run the Application
+### 5. Build the Knowledge Base
+
+Before launching the application for the first time, generate the FAISS vector index from the PDF documents in the `data/` directory.
+
+```bash
+python src/build_index.py
+```
+
+This command processes the documents, generates embeddings, and creates the FAISS index used for retrieval.
+
+---
+
+### 6. Run the Application
 
 ```bash
 streamlit run src/app.py
 ```
 
-The application will be available at
+The application will be available at:
 
 ```
 http://localhost:8501
